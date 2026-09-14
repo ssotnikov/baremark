@@ -1,2 +1,2 @@
-# mdview
-Fast markdown viewer for Windows
+# mdflick
+Lightweight Markdown for Windows
