@@ -1,2 +1,3 @@
-﻿/docs/private/
-
+/docs/private/
+/dist/
+/cmd/baremark/resource_windows_*.syso

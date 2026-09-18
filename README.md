@@ -19,3 +19,46 @@
 > BareMark is currently under active development and is not ready for production use yet.
 
 **Markdown. Nothing else.**
+
+## Development status
+
+Stage 0 (repository and build baseline) is complete. It establishes reproducible Windows AMD64 and ARM64 builds with embedded application metadata and brand resources. Stage 1 (Win32 window and lifecycle) has not started; the application UI is not implemented yet.
+
+## Requirements
+
+- Go 1.22 or newer;
+- PowerShell 7 on Windows, or GNU Make on Linux/WSL;
+- network access on the first build to download the pinned build-time Windows resource generator.
+
+The released application will not require Go or any other external runtime.
+
+## Build
+
+On Windows:
+
+```powershell
+.\build.ps1
+.\build.ps1 -Architecture amd64 -Configuration debug
+.\build.ps1 -Vulncheck
+```
+
+On Linux or WSL:
+
+```bash
+make
+make debug
+make vulncheck
+```
+
+Every canonical build first runs `go test ./...`, `go vet -unsafeptr=false ./...`, and the Windows-target vet check with the same vet flag. A failed check stops the build before an executable is produced. The optional PowerShell `-Vulncheck` switch runs `govulncheck ./...` before building; run it before a release. Install the scanner with `go install golang.org/x/vuln/cmd/govulncheck@latest` if needed.
+
+Build artifacts are written to `dist/`:
+
+```text
+baremark-{version}-amd64.exe
+baremark-{version}-arm64.exe
+```
+
+The version is read from `version.go`. BareMark's build-time resource generator assigns stable PE icon group IDs: `1` for the primary dark Shell icon, `101` for the light application icon, `201` and `202` for light and dark file icons, and `32512` for the dark `IDI_APPLICATION` icon. Both architectures and build configurations use the same mapping. Mandatory assets are validated before every canonical build; the generated EXE is checked against all four canonical ICO files, the manifest, and version information before publication.
+
+Executables are built and validated under temporary names in `dist/`. A stable artifact name is replaced only after the temporary executable passes every build check, so a failed build leaves the previously published executable unchanged.

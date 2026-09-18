@@ -106,27 +106,23 @@ If the canonical build scripts use different artifact names, follow the scripts/
 
 ```powershell
 .\build.ps1
-go test ./...
-go vet ./...
-
-$env:GOOS = "windows"
-go vet -unsafeptr=false ./...
-Remove-Item Env:GOOS -ErrorAction SilentlyContinue
 ```
 
 ### Linux / WSL
 
 ```bash
 make
-go test ./...
-GOOS=windows go vet -unsafeptr=false ./...
 ```
+
+Both canonical build entry points run `go test ./...`, `go vet -unsafeptr=false ./...`, and the Windows-target vet check with the same vet flag before compiling. Any failed check must stop the build.
 
 Before release, also run:
 
 ```text
 govulncheck ./...
 ```
+
+On Windows, `./build.ps1 -Vulncheck` runs this scan before the build; on Linux/WSL, use `make vulncheck` separately. The scanner is a developer tool, not an application runtime dependency.
 
 Use repository-provided scripts as the canonical build path. Do not duplicate build logic in ad-hoc commands when a script already exists.
 
@@ -272,6 +268,20 @@ BareMark-app-dark.ico
 BareMark-file-light.ico
 BareMark-file-dark.ico
 ```
+
+Every canonical multi-resolution ICO must contain exactly these image sizes:
+
+```text
+16x16
+24x24
+32x32
+48x48
+256x256
+```
+
+Build validation must fail if a mandatory ICO is missing any required size or contains additional sizes.
+
+The PE icon group IDs are fixed: `1` = primary dark application icon, `101` = light application icon, `201` = light file icon, `202` = dark file icon, and `32512` = dark `IDI_APPLICATION`. Keep this mapping identical in AMD64/ARM64 and debug/release builds. Verify the embedded image payloads before publishing an EXE.
 
 The application logo/banner is:
 
