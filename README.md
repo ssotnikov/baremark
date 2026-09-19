@@ -22,7 +22,7 @@
 
 ## Development status
 
-Stage 0 (repository and build baseline) is complete. It establishes reproducible Windows AMD64 and ARM64 builds with embedded application metadata and brand resources. Stage 1 (Win32 window and lifecycle) has not started; the application UI is not implemented yet.
+Stages 0 and 1 are complete. BareMark now has a native Win32 window and lifecycle, a DPI-aware DIB backbuffer, independent semantic light/dark palettes, and an in-memory theme test button. The large taskbar/Alt+Tab icon remains stable while the small caption icon follows the actual title-bar contrast. Document viewing and editing are not implemented yet; stage 2 has not started. Windows 10 receives a best-effort immersive title-bar request with a safe native fallback when DWM rejects it.
 
 ## Requirements
 
